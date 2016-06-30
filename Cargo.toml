@@ -5,3 +5,4 @@ authors = ["Marcus Ball <marcus@marcusball.me>"]
 
 [dependencies]
 minecraft-server-info = { path = "../minecraft-server-info" }
+slack = "0.14.0"
