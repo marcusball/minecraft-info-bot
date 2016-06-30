@@ -1,7 +1,4 @@
-extern crate byteorder;
-extern crate rustc_serialize;
-
-mod miner;
+extern crate minecraft_server_info;
 
 use std::net::TcpStream;
 use std::time::Duration;
@@ -14,7 +11,8 @@ fn main() {
     let _ = stream.set_read_timeout(Some(Duration::from_secs(3)));
     let _ = stream.set_write_timeout(Some(Duration::from_secs(1)));
 
-    let data = miner::query_server(&mut stream, &String::from(host), port).unwrap();
+    let data = minecraft_server_info::query_server(&mut stream, &String::from(host), port).unwrap();
+    println!("{:?}", &data);
 
     println!("{}", data.description.text);
     println!("");
@@ -26,15 +24,5 @@ fn main() {
     }
     else{
         println!("No one is online!");
-    }
-}
-
-#[cfg(test)]
-mod test{
-    use super::*;
-
-    #[test]
-    fn test_pack_varint(){
-        assert_eq!(pack_varint(17), vec![0x11 as u8]);
     }
 }

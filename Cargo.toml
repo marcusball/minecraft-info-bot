@@ -4,6 +4,4 @@ version = "0.1.0"
 authors = ["Marcus Ball <marcus@marcusball.me>"]
 
 [dependencies]
-bytes = "0.3.0"
-byteorder = "0.5.3"
-rustc-serialize = "0.3"
+minecraft-server-info = { path = "../minecraft-server-info" }
