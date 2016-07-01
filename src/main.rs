@@ -3,7 +3,7 @@ extern crate slack;
 
 use std::net::TcpStream;
 use std::time::Duration;
-
+use std::fmt::Display;
 
 
 struct MinerBotHandler{
@@ -41,19 +41,7 @@ impl MinerBotHandler{
         let server_data = minecraft_server_info::query_server(&mut self.get_stream(), &self.host, self.port);
         if let Ok(data) = server_data{
             if data.players.online > 0{
-                let len = data.players.online;
-                let players = data.players.sample.unwrap().iter()
-                    .map(|player_data| &player_data.name)
-                    .fold(("".to_string(), 0), |(mut phrase, mut index), word|{
-                        if index > 0{
-                            if len != 2{ phrase.push_str(","); }
-                            if index == len - 1 { phrase.push_str(" and "); }
-                            else{ phrase.push(' '); }
-                        }
-                        phrase.push_str(word.to_string().as_str());
-                        index += 1;
-                        (phrase, index)
-                    }).0;
+                let players = join_names(&mut data.players.sample.unwrap().iter().map(|player_data| &player_data.name));
                 return format!("{} {} online",players, match data.players.online { 1 => "is", _ => "are"});
             }
             else{
@@ -114,6 +102,16 @@ impl slack::EventHandler for MinerBotHandler {
         // set a channel topic via the web api
         // let _ = cli.set_topic("#general", "bots rule!");
     }
+}
+
+fn join_names<'a, T: Display, I: ExactSizeIterator<Item=T>>(words: &mut I) -> String{
+    let len = words.len();
+    words.enumerate().map(|(i, word)| match (i, len) {
+        (0, _) => word.to_string(),
+        (1, 2) => format!(" and {}", word),
+        (i, n) if i == n - 1 => format!(", and {}", word),
+        _ => format!(", {}", word),
+    }).collect()
 }
 
 
@@ -177,17 +175,9 @@ fn show_online(){
 fn test_fold(){
     let items = vec!["rick", "morty", "beth", "jerry", "summer"];
 
-    let len = items.len();
-    let string = items.iter().fold(("".to_string(), 0), |(mut phrase, mut index), word|{
-        if index > 0{
-            if len != 2{ phrase.push_str(","); }
-            if index == len - 1 { phrase.push_str(" and "); }
-            else{ phrase.push(' '); }
-        }
-        phrase.push_str(word.to_string().as_str());
-        index += 1;
-        (phrase, index)
-    }).0;
-
-    println!("{}", string);
+    assert_eq!(join_names(&mut items.iter().take(5)), "rick, morty, beth, jerry, and summer");
+    assert_eq!(join_names(&mut items.iter().take(4)), "rick, morty, beth, and jerry");
+    assert_eq!(join_names(&mut items.iter().take(3)), "rick, morty, and beth");
+    assert_eq!(join_names(&mut items.iter().take(2)), "rick and morty");
+    assert_eq!(join_names(&mut items.iter().take(1)), "rick");
 }
