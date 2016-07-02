@@ -2,7 +2,7 @@
 name = "minecraft-info-bot"
 version = "0.1.0"
 dependencies = [
- "minecraft-server-info 0.1.0",
+ "minecraft-server-info 0.1.0 (git+https://github.com/marcusball/minecraft-server-info)",
  "slack 0.14.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -149,6 +149,7 @@ dependencies = [
 [[package]]
 name = "minecraft-server-info"
 version = "0.1.0"
+source = "git+https://github.com/marcusball/minecraft-server-info#1bee453c60abfc810171d8771e9204a8c2a67c5d"
 dependencies = [
  "byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytes 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
